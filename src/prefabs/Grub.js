@@ -3,7 +3,7 @@ class Grub extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture);
         scene.add.existing(this);
         this.points = pointValue;
-        this.moveSpeed = game.settings.spaceshipSpeed;
+        this.moveSpeed = game.settings.foodSpeed;
         //animation config
         this.anims.create({
             key: 'grub_move',

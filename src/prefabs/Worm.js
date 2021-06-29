@@ -3,7 +3,13 @@ class Worm extends Phaser.GameObjects.Sprite {
         super(scene, x, y, texture);
         scene.add.existing(this);
         this.points = pointValue;
-        this.moveSpeed = (game.setting.foodSpeed * 1.5);
+        this.moveSpeed = (game.settings.foodSpeed * 1.5);
+        this.shouldMove = false;
+        this.timerWait = false;
+        this.hasPassed = false;
+        // worm spawn timer
+        
+
         //animation config
         this.anims.create({
             key: 'worm_move',
@@ -12,26 +18,44 @@ class Worm extends Phaser.GameObjects.Sprite {
             repeat: -1
         });
         this.anims.play('worm_move');
+        
     }
 
     update() {
-        this.clock = this.time.addEvent({
-            delay: 10,
-            callback: () => {
-                
-            }
-        })
+
+        if (!this.shouldMove && !this.timerWait) {
+            this.timerWait = true;
+            this.clock = this.scene.time.addEvent({
+                delay: 10000,
+                callback: () => {
+                    //if the game isn't over, increase and display the timer
+                    this.timerWait = false;
+                    this.shouldMove = true;
+                }
+            })
+        }
 
         //moves left
-        this.x -= this.moveSpeed;
-        //wrap around left to right
-        let remain = true;
-        if (this.x <= 0 - this.width) {
-            remain = false;
-            this.x = game.config.width;
-        } else {
-            remain = true;
-            this.x = game.config.width + this.width
+        if (this.shouldMove) {
+            this.x -= this.moveSpeed;
+            if (this.x <= 0 - this.width) {
+                this.x = game.config.width;
+                
+                if (!this.hasPassed) {
+                    this.hasPassed = true;
+                } else {
+                    this.hasPassed = false;
+                    this.shouldMove = false;
+                }
+            }
         }
+        //wrap around left to right twice, then freeze and start the timer
+        
+               
+        
+        
+    }
+    reset() {
+        this.x  = game.config.width;
     }
 }
